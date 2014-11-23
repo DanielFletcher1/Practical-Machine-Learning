@@ -1,0 +1,41 @@
+---
+title: "Practical Machine Learning"
+author: "Daniel Fletcher"
+date: "Saturday, November 22, 2014"
+output: html_document
+---
+NOTE:  In order to avoid lengthy compiling time for my submission file, all code will be in comments.
+
+
+*1. Preprocessing for the algorithm.*  First, in order to reduce the number of variables from 160 to a more manageable number, I eliminated all columns witn NAs and "" (blanks) because they were each over 96% of the column and appeared to add only noise to the data.  This reduced the column count to less than 60.
+
+Next, I gleaned some valuable information from the Caret package's help page and used a correlation function `findCorrelation()` to weed out highly correlated variables.
+```{r}
+## naindex <- sapply(traindata, function(x) sum(is.na(x)))/nrow(traindata)  ## locating NAs
+## naindex <- which(naindex == TRUE)  ## getting NA index
+## noNAtraindata <- traindata[,-naindex]  ## subsetting out NAs
+## blankcount <- sapply(noNAtraindata, function(x) sum(x == ""))/nrow(noNAtraindata) ## locating ""
+## removeblanksindex <- which(blankcount > 0) ## getting blank index
+## tidytraindata <- noNAtraindata[,-removeblanksindex] ## subsetting out blanks
+
+## cormatrix <- cor(train[,-c(1:2,56)]) ## get a correlation matrix
+## highlyCorDescr <- findCorrelation(cormatrix, cutoff = 0.75) ## locate highly correlated variables
+## corremovedtrain <- train[,-highlyCorDescr] ## subset out the highly correlated variables
+
+```
+
+*2. Fitting the model.*  Once I had the data subsetted down to about 35 variables, I then used Caret's `createDataPartition()` function to pull out a random subset from the data I could train on, leaving about 40% to test on.  As an added convenience, this function automatically performs cross-validation, ensuring the model is not overfitted to the noise of an unrepresenative subset of the data.  Next, I chose to use the default random forest method of the training function because of its highly acclaimed accuracy.  Finally, I tested the model on my testing set and observed its accuracy.  Using `mfit$finalModel` provided the expected out-of-sample error of about 0.78%
+```{r}
+## inTrain <- createDataPartition(y = corremovedtrain$classe, p = .6, list = FALSE) ## partition
+## training <- corremovedtrain[inTrain,] ## create training set
+## mfit <- train(classe ~ ., data = training) ## fit model on default method = "rf" with built-in CV
+## testing <- corremovedtrain[-inTrain,] ## create test set
+## preds <- predict(mfit, testing) ## make predictions
+## confusionMatrix(preds,testing$classe) ## apply predictions
+## mfit$finalModel ## see expected out-of-sample error (about 0.78%)
+
+```
+
+Unsurprisingly, with a model most humans would likely fail to understand and that took about 50 minutes to build, all 20 predictions on the test data were correct.
+
+Citation:  Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. Qualitative Activity Recognition of Weight Lifting Exercises. Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13) . Stuttgart, Germany: ACM SIGCHI, 2013.
