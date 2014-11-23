@@ -24,7 +24,7 @@ Next, I gleaned some valuable information from the Caret package's help page and
 
 ```
 
-*2. Fitting the model.*  Once I had the data subsetted down to about 35 variables, I then used Caret's `createDataPartition()` function to pull out a random subset from the data I could train on, leaving about 40% to test on.  As an added convenience, this function automatically performs cross-validation, ensuring the model is not overfitted to the noise of an unrepresenative subset of the data.  Next, I chose to use the default random forest method of the training function because of its highly acclaimed accuracy.  Finally, I tested the model on my testing set and observed its accuracy.  Using `mfit$finalModel` provided the expected out-of-sample error of about 0.78%
+*2. Fitting the model.*  Once I had the data subsetted down to about 35 variables, I then used Caret's `createDataPartition()` function to pull out a random subset from the data I could train on, leaving about 40% to test on.  As an added convenience, this function automatically performs cross-validation, ensuring the model is not overfitted to the noise of an unrepresenative subset of the data.  Next, I chose to use the default random forest method of the training function because of its highly acclaimed accuracy.  Finally, I tested the model on my testing set and observed its accuracy.  Using `mfit$finalModel` provided the expected out-of-sample error of about 0.78%.
 ```{r}
 ## inTrain <- createDataPartition(y = corremovedtrain$classe, p = .6, list = FALSE) ## partition
 ## training <- corremovedtrain[inTrain,] ## create training set
